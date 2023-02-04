@@ -1,0 +1,559 @@
+import controlP5.*;
+import processing.serial.*;
+
+ControlP5 cp5;
+
+DropdownList d1;
+
+Serial myPort;
+
+int selected_port = 0;
+String portName;
+int serialListIndex;
+int Brightness = 100;
+int Saturation = 100;
+int glob;
+int globa;
+int global;
+int global_width = 620;
+int BAUD = 115200;
+int delay = 3;
+boolean autoPreset = false;
+boolean hasRendered = false;
+int r;
+int g;
+int b;
+int r_trim = 30;
+int g_trim = 0;
+int b_trim = 0;
+int preset = 0;
+int length = 0;
+int speed = 9;
+int initialTime;
+color rgb = 255;
+color set_rgb = 255;
+color[] led1 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led2 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led3 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led4 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led5 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led6 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led7 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led8 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led9 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led10 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led11 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led12 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led13 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led14 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led15 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led16 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led17 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led18 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led19 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led20 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led21 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led22 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led23 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led24 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led25 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led26 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led27 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led28 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led29 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+color[] led30 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+void setup() {
+  clear();
+  surface.setResizable(true);
+  size(620, 620);
+  colorMode(HSB,360,255,255);
+  noStroke();
+  noSmooth();
+  frameRate(30);
+  initialTime = millis();
+  background(127);
+  int thickness = (int) map(620,0,width,5,100);
+  int slices    = (int) map(10000,0,height,6,128);
+
+  if(!(hasRendered)) {
+    background(127);
+    fill(0);
+    circle(120, 500, 210);
+    drawColorCircle(100, thickness, slices, 1.5);
+    hasRendered = true;
+  }
+  cp5 = new ControlP5(this);
+  cp5.addSlider("Brightness")
+     .setPosition(40,40)
+     .setSize(30,200)
+     .setRange(0,255)
+     .setNumberOfTickMarks(10)
+     .setSliderMode(Slider.FIX)
+     .setValue(255)
+     ;
+   cp5.addSlider("Saturation")
+     .setPosition(90,40)
+     .setSize(30,200)
+     .setRange(0,255)
+     .setNumberOfTickMarks(10)
+     .setSliderMode(Slider.FIX)
+     .setValue(255)
+     ;
+  cp5.addSlider("preset")
+     .setPosition(260,580)
+     .setWidth(300)
+     .setRange(0,14) // values can range from big to small as well
+     .setValue(0)
+     .setNumberOfTickMarks(15)
+     .setSliderMode(Slider.FIX)
+     ;
+  cp5.addSlider("length")
+     .setPosition(260,500)
+     .setWidth(300)
+     .setRange(0,14) // values can range from big to small as well
+     .setValue(0)
+     .setNumberOfTickMarks(15)
+     .setSliderMode(Slider.FIX)
+     ;
+  cp5.addSlider("speed")
+     .setPosition(260,450)
+     .setWidth(300)
+     .setRange(9,0) // values can range from big to small as well
+     .setValue(5)
+     .setNumberOfTickMarks(10)
+     .setSliderMode(Slider.FIX)
+     ;   
+  d1 = cp5.addDropdownList("myList-d1")
+     .setPosition(140, 40)
+     .setSize(100, 200)
+     .setHeight(200)
+     .setItemHeight(40)
+     .setBarHeight(30)
+     .setColorBackground(color(60))
+     .setColorActive(color(255, 128))
+     ;
+ d1.getCaptionLabel().set("PORT");
+ portName = Serial.list()[1]; //0 as default
+ myPort = new Serial(this, portName, BAUD);
+} 
+
+void draw()
+{ 
+  cursor();
+  fill(127);
+  rect(0,0,300,380);
+  float d = int(dist(120, 500, mouseX, mouseY));
+  if(d < 99) {
+    cursor(CROSS);
+    colorMode(RGB, 255, 255, 255);
+    rgb = get(mouseX, mouseY);
+    r = int(red(rgb));
+    g = int(green(rgb));
+    b = int(blue(rgb));
+    if(mousePressed) {
+      set_rgb = rgb; 
+    }
+  }
+  else {
+  }
+  render_displays();
+  matrix();
+
+  if ( Brightness != glob || Saturation != global || global_width != width){
+    if(Brightness != glob) {
+      glob = Brightness;
+    }
+    if(Saturation != global) {
+      global = Saturation;
+    }
+    if(global_width != width) {
+      global_width = width;
+    }
+    fill(0);
+    circle(120, 500, 210);
+    int thickness = (int) map(620,0,620,5,100);
+    int slices    = (int) map(1000,0,620,6,128);
+    drawColorCircle(100, thickness, slices, 1.5);
+    rotate(radians(-90));
+    translate(-120, -500);
+  }
+  if ( preset != globa ) {
+     globa = preset;
+     update_leds();
+  }
+  if(d1.isMouseOver()) {
+   d1.clear(); //Delete all the items
+   for (int i=0;i<Serial.list().length;i++) {
+     d1.addItem(Serial.list()[i], i); //add the items in the list
+   }
+  }
+  if ( myPort.available() > 0) {  //read incoming data from serial port
+    //println(myPort.readStringUntil('\n')); //read until new input
+   }
+  
+  if(button(200, 260, 540, 400, 560)) {
+   autoPreset = false;
+  }
+  fill(0, 0, 255);
+  text("Stop", 330, 555);
+  if(button(200, 420, 540, 560, 560)) {
+   autoPreset = true;
+  }
+  fill(0, 0, 255);
+  text("Start", 490, 555);
+  runAutoPreset();
+}
+
+void drawColorCircle(int radius, int weight, int slices, float degreesInBetween)
+{ 
+  float halfDegreesInBetween = degreesInBetween/2;
+  float sliceAngle = (360.0/(float) slices); 
+  
+  // make piece a bit smaller because of the degreesInBetween margin
+  float slicePieceAngle = sliceAngle;
+ 
+  int innerRadius = radius - weight;
+  
+  translate(120, 500);
+  
+  rotate(radians(-90+halfDegreesInBetween));
+  
+  for(int i=0; i< slices; i++)
+  { 
+    fill(int(map(i, 0, slices, 0, 359)),Saturation,Brightness);
+    
+    arcPiece(slicePieceAngle, radius, innerRadius); 
+    rotate(radians(sliceAngle));
+  }
+  
+}
+
+void arcPiece(float angleDegrees, float radius, float iRadius) {
+  
+  // Based on Bezier Ellipse example - p137/138
+  // Processing: Creative Coding and Generative Art in Processing 2
+  // Ira Greenberg, Dianna Xu, Deepak Kumar
+  
+  float cx1 = 0;
+  float cy1 = 0;
+  float cx2 = 0;
+  float cy2 = 0;
+  
+  float ax = 0;
+  float ay = 0;
+  
+  // startpoint
+  float sx = cos(0)*radius;
+  float sy = sin(0)*radius;
+  
+  // with two points an arc can be 90 degrees at a maximum
+  if(angleDegrees>90) angleDegrees = 90;
+  
+  float angle = radians(angleDegrees); 
+  
+  float controlTheta1 = angle/3.0;
+  float controlTheta2 = controlTheta1*2.0;
+  float controlRadius = radius/cos(controlTheta1);
+  
+  beginShape();
+  
+      // start point vertex point
+      vertex(sx, sy);
+      
+      // calculate control points of the bezier
+      cx1 = cos(controlTheta1)*controlRadius;
+      cy1 = sin(controlTheta1)*controlRadius;
+      cx2 = cos(controlTheta2)*controlRadius;
+      cy2 = sin(controlTheta2)*controlRadius;
+      
+      // next point down
+      ax = cos(angle)*radius;
+      ay = sin(angle)*radius;
+    
+      // draw curve with control points
+      bezierVertex(cx1, cy1, cx2, cy2, ax, ay);
+      
+      // go to inner point
+      ax = cos(angle)*iRadius;
+      ay = sin(angle)*iRadius;
+      
+      vertex(ax,ay);
+      
+      // go to inner point up
+      ax = cos(0)*iRadius;
+      ay = sin(0)*iRadius;
+      
+      // set controlRadius to the innerradius
+      controlRadius = iRadius/cos(controlTheta1);
+      
+      // calculate control points of the bezier
+      cx1 = cos(controlTheta1)*controlRadius;
+      cy1 = sin(controlTheta1)*controlRadius;
+      cx2 = cos(controlTheta2)*controlRadius;
+      cy2 = sin(controlTheta2)*controlRadius;
+      
+      // switch the points compared with the other arc
+      // because we draw the other way round
+      bezierVertex(cx2, cy2, cx1, cy1, ax, ay);
+  
+  endShape(CLOSE);
+}
+
+boolean button(color fill_color, int posx, int posy, int sizex, int sizey) {
+  rectMode(CORNERS);
+  noStroke();
+  fill(0);
+  rect(posx - 5, posy - 5, sizex + 5, sizey + 5);
+  fill(fill_color);
+  rect(posx, posy, sizex, sizey);
+  if(mouseX > posx - 5 && mouseX < sizex + 5 && mouseY > posy - 5 && mouseY < sizey + 5) {
+   cursor(HAND);
+   if(mousePressed) {
+     return true;
+   }
+   return false;
+  }
+  else {
+   return false;
+  }
+}
+
+void render_displays() {
+  colorMode(RGB, 255, 255, 255);
+  fill(0);
+  circle(65, 320, 56);
+  fill(rgb);
+  circle(65, 320, 50);
+  textAlign(CENTER);
+  textSize(20);
+  fill(255,255,255);
+  text("Color", 65, 370);
+  fill(0);
+  circle(165, 320, 56);
+  fill(set_rgb);
+  circle(165, 320, 50);
+  textAlign(CENTER);
+  textSize(20);
+  fill(255,255,255);
+  text("Set Color", 165, 370);
+  colorMode(HSB,360,255,255);
+}
+void controlEvent(ControlEvent theEvent) { //when something in the list is selected
+    if (theEvent.isController() && d1.isMouseOver()) {
+    myPort.clear(); //delete the port
+    myPort.stop(); //stop the port
+    portName = Serial.list()[int(theEvent.getController().getValue())]; //port name is set to the selected port in the dropDownMeny
+    myPort = new Serial(this, portName, BAUD); //Create a new connection
+    selected_port = int(theEvent.getController().getValue());
+    println("Serial index set to: " + theEvent.getController().getValue());
+    update_leds();
+    }
+}
+void set_light(int num, int red_color, int green_color, int blue_color) {
+  try{
+  myPort.write(Integer.toString(256));
+  myPort.write(',');
+  myPort.write(Integer.toString(num));
+  myPort.write(',');
+  myPort.write(Integer.toString(red_color));
+  myPort.write(',');
+  myPort.write(Integer.toString(green_color));
+  myPort.write(',');
+  myPort.write(Integer.toString(blue_color));
+  myPort.write(',');
+  myPort.write(Integer.toString(257));
+  myPort.write(',');
+  }catch(Exception e){
+    //myPort.clear(); //delete the port
+    //myPort.stop(); //stop the port
+    //portName = Serial.list()[selected_port]; //port name is set to the selected port in the dropDownMeny
+    //myPort = new Serial(this, portName, BAUD); //Create a new connection
+    println("failed to write.. reconnecting");
+    //set_light(num, red_color, green_color, blue_color);
+  }
+  delay(delay);
+}
+
+void matrix() {
+  if(button(led1[preset], 300, 250, 320, 270)) {
+    led1[preset]=set_rgb;
+    set_light(0,int(red(led1[preset])),int(green(led1[preset])),int(blue(led1[preset])));
+  }
+  if(button(led2[preset], 300, 210, 320, 230)) {
+    led2[preset]=set_rgb;
+    set_light(1,int(red(led2[preset])),int(green(led2[preset])),int(blue(led2[preset])));
+  }
+  if(button(led3[preset], 300, 170, 320, 190)) {
+    led3[preset]=set_rgb;
+    set_light(2,int(red(led3[preset])),int(green(led3[preset])),int(blue(led3[preset])));
+  }
+  if(button(led4[preset], 300, 130, 320, 150)) {
+    led4[preset]=set_rgb;
+    set_light(3,int(red(led4[preset])),int(green(led4[preset])),int(blue(led4[preset])));
+  }
+  if(button(led5[preset], 300, 90, 320, 110)) {
+    led5[preset]=set_rgb;
+    set_light(4,int(red(led5[preset])),int(green(led5[preset])),int(blue(led5[preset])));
+  }
+  if(button(led6[preset], 300, 50, 320, 70)) {
+    led6[preset]=set_rgb;
+    set_light(5,int(red(led6[preset])),int(green(led6[preset])),int(blue(led6[preset])));
+  }
+  if(button(led7[preset], 340, 50, 360, 70)) {
+    led7[preset]=set_rgb;
+    set_light(6,int(red(led7[preset])),int(green(led7[preset])),int(blue(led7[preset])));
+  }
+  if(button(led8[preset], 340, 90, 360, 110)) {
+    led8[preset]=set_rgb;
+    set_light(7,int(red(led8[preset])),int(green(led8[preset])),int(blue(led8[preset])));
+  }
+  if(button(led9[preset], 340, 130, 360, 150)) {
+    led9[preset]=set_rgb;
+    set_light(8,int(red(led9[preset])),int(green(led9[preset])),int(blue(led9[preset])));
+  }
+  if(button(led10[preset], 340, 170, 360, 190)) {
+    led10[preset]=set_rgb;
+    set_light(9,int(red(led10[preset])),int(green(led10[preset])),int(blue(led10[preset])));
+  }
+  if(button(led11[preset], 340, 210, 360, 230)) {
+    led11[preset]=set_rgb;
+    set_light(10,int(red(led11[preset])),int(green(led11[preset])),int(blue(led11[preset])));
+  }
+  if(button(led12[preset], 340, 250, 360, 270)) {
+    led12[preset]=set_rgb;
+    set_light(11,int(red(led12[preset])),int(green(led12[preset])),int(blue(led12[preset])));
+  }
+  if(button(led13[preset], 380, 250, 400, 270)) {
+    led13[preset]=set_rgb;
+    set_light(12,int(red(led13[preset])),int(green(led13[preset])),int(blue(led13[preset])));
+  }
+  if(button(led14[preset], 380, 210, 400, 230)) {
+    led14[preset]=set_rgb;
+    set_light(13,int(red(led14[preset])),int(green(led14[preset])),int(blue(led14[preset])));
+  }
+  if(button(led15[preset], 380, 170, 400, 190)) {
+    led15[preset]=set_rgb;
+    set_light(14,int(red(led15[preset])),int(green(led15[preset])),int(blue(led15[preset])));
+  }
+  if(button(led16[preset], 380, 130, 400, 150)) {
+    led16[preset]=set_rgb;
+    set_light(15,int(red(led16[preset])),int(green(led16[preset])),int(blue(led16[preset])));
+  }
+  if(button(led17[preset], 380, 90, 400, 110)) {
+    led17[preset]=set_rgb;
+    set_light(16,int(red(led17[preset])),int(green(led17[preset])),int(blue(led17[preset])));
+  }
+  if(button(led18[preset], 380, 50, 400, 70)) {
+    led18[preset]=set_rgb;
+    set_light(17,int(red(led18[preset])),int(green(led18[preset])),int(blue(led18[preset])));
+  }
+  if(button(led19[preset], 420, 50, 440, 70)) {
+    led19[preset]=set_rgb;
+    set_light(18,int(red(led19[preset])),int(green(led19[preset])),int(blue(led19[preset])));
+  }
+  if(button(led20[preset], 420, 90, 440, 110)) {
+    led20[preset]=set_rgb;
+    set_light(19,int(red(led20[preset])),int(green(led20[preset])),int(blue(led20[preset])));
+  }
+  if(button(led21[preset], 420, 130, 440, 150)) {
+    led21[preset]=set_rgb;
+    set_light(20,int(red(led21[preset])),int(green(led21[preset])),int(blue(led21[preset])));
+  }
+  if(button(led22[preset], 420, 170, 440, 190)) {
+    led22[preset]=set_rgb;
+    set_light(21,int(red(led22[preset])),int(green(led22[preset])),int(blue(led22[preset])));
+  }
+  if(button(led23[preset], 420, 210, 440, 230)) {
+    led23[preset]=set_rgb;
+    set_light(22,int(red(led23[preset])),int(green(led23[preset])),int(blue(led23[preset])));
+  }
+  if(button(led24[preset], 420, 250, 440, 270)) {
+    led24[preset]=set_rgb;
+    set_light(23,int(red(led24[preset])),int(green(led24[preset])),int(blue(led24[preset])));
+  }
+  if(button(led25[preset], 460, 250, 480, 270)) {
+    led25[preset]=set_rgb;
+    set_light(24,int(red(led25[preset])),int(green(led25[preset])),int(blue(led25[preset])));
+  }
+  if(button(led26[preset], 460, 210, 480, 230)) {
+    led26[preset]=set_rgb;
+    set_light(25,int(red(led26[preset])),int(green(led26[preset])),int(blue(led26[preset])));
+  }
+  if(button(led27[preset], 460, 170, 480, 190)) {
+    led27[preset]=set_rgb;
+    set_light(26,int(red(led27[preset])),int(green(led27[preset])),int(blue(led27[preset])));
+  }
+  if(button(led28[preset], 460, 130, 480, 150)) {
+    led28[preset]=set_rgb;
+    set_light(27,int(red(led28[preset])),int(green(led28[preset])),int(blue(led28[preset])));
+  }
+  if(button(led29[preset], 460, 90, 480, 110)) {
+    led29[preset]=set_rgb;
+    set_light(28,int(red(led29[preset])),int(green(led29[preset])),int(blue(led29[preset])));
+  }
+  if(button(led30[preset], 460, 50, 480, 70)) {
+    led30[preset]=set_rgb;
+    set_light(29,int(red(led30[preset])),int(green(led30[preset])),int(blue(led30[preset])));
+  }
+}
+void cursor() {
+  if(get(mouseX, mouseY) == -10921639) {
+    cursor(ARROW);
+  }
+  else if(get(mouseX, mouseY) == -16733441){
+    cursor(HAND);
+  }
+  else if(get(mouseX, mouseY) == -16765606){
+    cursor(HAND);
+  }
+  else if(get(mouseX, mouseY) == -16747303){
+    cursor(HAND);
+  }
+}
+void update_leds() {
+    set_light(0,int(red(led1[preset])),int(green(led1[preset])),int(blue(led1[preset])));
+    set_light(1,int(red(led2[preset])),int(green(led2[preset])),int(blue(led2[preset])));
+    set_light(2,int(red(led3[preset])),int(green(led3[preset])),int(blue(led3[preset])));
+    set_light(3,int(red(led4[preset])),int(green(led4[preset])),int(blue(led4[preset])));
+    set_light(4,int(red(led5[preset])),int(green(led5[preset])),int(blue(led5[preset])));
+    set_light(5,int(red(led6[preset])),int(green(led6[preset])),int(blue(led6[preset])));
+    set_light(6,int(red(led7[preset])),int(green(led7[preset])),int(blue(led7[preset])));
+    set_light(7,int(red(led8[preset])),int(green(led8[preset])),int(blue(led8[preset])));
+    set_light(8,int(red(led9[preset])),int(green(led9[preset])),int(blue(led9[preset])));
+    set_light(9,int(red(led10[preset])),int(green(led10[preset])),int(blue(led10[preset])));
+    set_light(10,int(red(led11[preset])),int(green(led11[preset])),int(blue(led11[preset])));
+    set_light(11,int(red(led12[preset])),int(green(led12[preset])),int(blue(led12[preset])));
+    set_light(12,int(red(led13[preset])),int(green(led13[preset])),int(blue(led13[preset])));
+    set_light(13,int(red(led14[preset])),int(green(led14[preset])),int(blue(led14[preset])));
+    set_light(14,int(red(led15[preset])),int(green(led15[preset])),int(blue(led15[preset])));
+    set_light(15,int(red(led16[preset])),int(green(led16[preset])),int(blue(led16[preset])));
+    set_light(16,int(red(led17[preset])),int(green(led17[preset])),int(blue(led17[preset])));
+    set_light(17,int(red(led18[preset])),int(green(led18[preset])),int(blue(led18[preset])));
+    set_light(18,int(red(led19[preset])),int(green(led19[preset])),int(blue(led19[preset])));
+    set_light(19,int(red(led20[preset])),int(green(led20[preset])),int(blue(led20[preset])));
+    set_light(20,int(red(led21[preset])),int(green(led21[preset])),int(blue(led21[preset])));
+    set_light(21,int(red(led22[preset])),int(green(led22[preset])),int(blue(led22[preset])));
+    set_light(22,int(red(led23[preset])),int(green(led23[preset])),int(blue(led23[preset])));
+    set_light(23,int(red(led24[preset])),int(green(led24[preset])),int(blue(led24[preset])));
+    set_light(24,int(red(led25[preset])),int(green(led25[preset])),int(blue(led25[preset])));
+    set_light(25,int(red(led26[preset])),int(green(led26[preset])),int(blue(led26[preset])));
+    set_light(26,int(red(led27[preset])),int(green(led27[preset])),int(blue(led27[preset])));
+    set_light(27,int(red(led28[preset])),int(green(led28[preset])),int(blue(led28[preset])));
+    set_light(28,int(red(led29[preset])),int(green(led29[preset])),int(blue(led29[preset])));
+    set_light(29,int(red(led30[preset])),int(green(led30[preset])),int(blue(led30[preset])));
+}
+
+void runAutoPreset() {
+  int temp_speed = speed*100;
+  if (millis() - initialTime > temp_speed){
+    initialTime = millis();
+    if(autoPreset) {
+     if(preset >= length) {
+     preset = -1;
+     }
+     preset++;
+     cp5.getController("preset").setValue(preset);
+    }
+  }
+}
